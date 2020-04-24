@@ -1,8 +1,20 @@
-import { MonteCarloTreeSearch } from ".";
 import { WinStatus, Board } from "./Board";
 import { FullBoard } from "./FullBoard";
 // @ts-ignore
 import worker from "workerize-loader!../../worker"; // eslint-disable-line
+
+const getThinkingTimeForDifficulty = (
+  difficulty: "easy" | "intermediate" | "hard"
+) => {
+  switch (difficulty) {
+    case "easy":
+      return 3000;
+    case "intermediate":
+      return 5000;
+    case "hard":
+      return 10000;
+  }
+};
 
 export class GameVsAi {
   private humanPlayer: WinStatus = WinStatus.PLAYER_X;
@@ -15,7 +27,6 @@ export class GameVsAi {
 
     this.worker = new worker();
     this.worker.onmessage = (e: any) => {
-      console.log(e);
       if (e.data.type === "RPC") return;
       this.resolvePromise(e.data);
     };
@@ -41,6 +52,7 @@ export class GameVsAi {
           this.board.getAvailableMoves()
         )}`
       );
+      return this.getState();
     }
     console.log(`performed move: ${move}`);
 
@@ -48,12 +60,17 @@ export class GameVsAi {
     return this.getState();
   }
 
-  async getNextAiMove() {
+  async getNextAiMove(difficulty: "easy" | "intermediate" | "hard") {
     const promise = new Promise<any>(resolve => {
       this.resolvePromise = resolve;
     });
 
-    this.worker.postMessage([this.board.exportBoard(), WinStatus.PLAYER_O]);
+    const timeToThink = getThinkingTimeForDifficulty(difficulty);
+    this.worker.postMessage([
+      this.board.exportBoard(),
+      WinStatus.PLAYER_O,
+      timeToThink
+    ]);
     const exportedBoard = await promise;
     this.board = FullBoard.importBoard(exportedBoard);
   }

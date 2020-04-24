@@ -34,6 +34,21 @@ const TicTacContainer = styled.div<{
   ${p => p.isSelected && "border: 3px solid yellow"}
 `;
 
+const DifficultyContainer = styled.div`
+  & > button {
+    font-size: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    -webkit-appearance: none;
+
+    &:not(:last-child) {
+      margin-right: 16px;
+    }
+  }
+`;
+
 const getColor = (state: "empty" | "player1" | "player2") => {
   switch (state) {
     case "empty": {
@@ -47,6 +62,20 @@ const getColor = (state: "empty" | "player1" | "player2") => {
     }
   }
 };
+
+const getStateFromWinStatus = (status: WinStatus) => {
+  switch (status) {
+    case WinStatus.PLAYER_O:
+      return "Robot wins! Better luck next time.";
+    case WinStatus.PLAYER_X:
+      return "You win! Congratulations!";
+    case WinStatus.DRAW:
+      return "It's a draw!";
+    default:
+      return "";
+  }
+};
+
 const Square = styled.div<{ state: "empty" | "player1" | "player2" }>`
   border: 1px solid black;
   background-color: ${p => getColor(p.state)};
@@ -61,11 +90,15 @@ export const App = () => {
   const [localSelectedSquare, setLocalSelectedSquare] = useState<number | null>(
     null
   );
+  const [difficulty, setDifficulty] = useState<
+    "easy" | "intermediate" | "hard" | null
+  >(null);
 
   const handleSquareClick = (idx: number) => {
     if (
       currentPlayer !== WinStatus.PLAYER_X ||
-      winStatus !== WinStatus.IN_PROGRESS
+      winStatus !== WinStatus.IN_PROGRESS ||
+      game.getBoard().boards[idx].checkStatus() !== WinStatus.IN_PROGRESS
     )
       return;
     if (selectedSquare !== null) return;
@@ -97,42 +130,64 @@ export const App = () => {
   useEffect(() => {
     if (currentPlayer === WinStatus.PLAYER_O) {
       const doThing = async () => {
-        await game.getNextAiMove();
+        if (difficulty === null) return;
+        await game.getNextAiMove(difficulty);
         setGrid(game.getState());
       };
       doThing();
     }
-  }, [currentPlayer]);
+  }, [currentPlayer, difficulty]);
 
-  console.log({ selectedSquare, localSelectedSquare });
   return (
     <FullScreenContainer>
-      <BoardWrapper>
-        {winStatus !== WinStatus.IN_PROGRESS && <p>Game result: {winStatus}</p>}
-        <TicTacContainer gap="64px">
-          {grid.map((square, squareIdx) => (
-            <TicTacContainer
-              isWon={
-                [WinStatus.PLAYER_O, WinStatus.PLAYER_X].includes(
-                  game.getBoard().boards[squareIdx].checkStatus()
-                ) && game.getBoard().boards[squareIdx].checkStatus()
-              }
-              isSelected={
-                squareIdx === selectedSquare ||
-                squareIdx === localSelectedSquare
-              }
-              onClick={() => handleSquareClick(squareIdx)}
-            >
-              {square.map((box, boxIdx) => (
-                <Square
-                  onClick={ev => handleBoxClick(ev, squareIdx, boxIdx)}
-                  state={box}
-                />
-              ))}
-            </TicTacContainer>
-          ))}
-        </TicTacContainer>
-      </BoardWrapper>
+      {difficulty === null ? (
+        <DifficultyContainer>
+          <h1>Select difficulty</h1>
+          <button onClick={() => setDifficulty("easy")}>Easy</button>
+          <button onClick={() => setDifficulty("intermediate")}>
+            Intermediate
+          </button>
+          <button onClick={() => setDifficulty("hard")}>Hard</button>
+        </DifficultyContainer>
+      ) : (
+        <BoardWrapper>
+          {winStatus !== WinStatus.IN_PROGRESS && (
+            <p>{getStateFromWinStatus(winStatus)}</p>
+          )}
+          {winStatus === WinStatus.IN_PROGRESS ? (
+            currentPlayer === WinStatus.PLAYER_X ? (
+              <p>It is your turn to move</p>
+            ) : (
+              <p>Computer is thinking...</p>
+            )
+          ) : null}
+          <TicTacContainer gap="64px">
+            {grid.map((square, squareIdx) => (
+              <TicTacContainer
+                key={squareIdx}
+                isWon={
+                  [WinStatus.PLAYER_O, WinStatus.PLAYER_X].includes(
+                    game.getBoard().boards[squareIdx].checkStatus()
+                  ) && game.getBoard().boards[squareIdx].checkStatus()
+                }
+                isSelected={
+                  squareIdx === selectedSquare ||
+                  squareIdx === localSelectedSquare
+                }
+                onClick={() => handleSquareClick(squareIdx)}
+              >
+                {square.map((box, boxIdx) => (
+                  <Square
+                    key={boxIdx}
+                    onClick={ev => handleBoxClick(ev, squareIdx, boxIdx)}
+                    state={box}
+                  />
+                ))}
+              </TicTacContainer>
+            ))}
+          </TicTacContainer>
+        </BoardWrapper>
+      )}
     </FullScreenContainer>
   );
 };

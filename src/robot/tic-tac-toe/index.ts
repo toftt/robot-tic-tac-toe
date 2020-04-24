@@ -6,7 +6,7 @@ import { Tree } from "./Tree";
 export class MonteCarloTreeSearch {
   static readonly WIN_SCORE: number = 10;
 
-  findNextMove(board: Board, winStatus: WinStatus) {
+  findNextMove(board: Board, winStatus: WinStatus, thinkTime: number) {
     const opponent = board.getOpposedStatus(winStatus);
 
     const tree = new Tree();
@@ -14,7 +14,7 @@ export class MonteCarloTreeSearch {
 
     rootNode.state.board = board.clone();
 
-    const end = new Date().valueOf() + 1000;
+    const end = new Date().valueOf() + thinkTime;
     let x = 0;
     while (new Date().valueOf() < end) {
       x++;
@@ -35,7 +35,6 @@ export class MonteCarloTreeSearch {
 
       // update
       this.backPropogation(nodeToExplore, playoutResult);
-      //await new Promise((res) => setTimeout(res, 0));
     }
 
     console.log(`ran ${x} iterations`);

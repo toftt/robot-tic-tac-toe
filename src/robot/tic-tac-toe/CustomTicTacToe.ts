@@ -44,6 +44,8 @@ export class CustomTicTacToeBoard {
   }
 
   getAvailableMoves(): Array<number> {
+    if (this.checkStatus() !== WinStatus.IN_PROGRESS) return [];
+
     return new Array(9)
       .fill(undefined)
       .map((_, index) => index)

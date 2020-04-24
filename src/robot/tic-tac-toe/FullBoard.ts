@@ -76,6 +76,7 @@ export class FullBoard implements Board {
   }
 
   getAvailableMoves() {
+    // if there is a selected board
     if (this.currentBoard !== null)
       return this.boards[this.currentBoard].getAvailableMoves();
 
