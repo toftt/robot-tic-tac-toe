@@ -31,6 +31,7 @@ const BoardWrapper = styled.div`
 const TicTacContainer = styled.div<{
   gap?: boolean;
   isSelected?: boolean;
+  isSelectable?: boolean;
   isWon?: WinStatus | false;
 }>`
   width: 100%;
@@ -39,6 +40,7 @@ const TicTacContainer = styled.div<{
   position: relative;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  ${p => p.isSelectable && "cursor: pointer"}
 
   ${p => p.isWon === WinStatus.PLAYER_X && "border: 3px solid blue"}
   ${p => p.isWon === WinStatus.PLAYER_O && "border: 3px solid green"}
@@ -126,6 +128,7 @@ const getStateFromWinStatus = (status: WinStatus, difficulty: string) => {
 const Square = styled.div<{ state: "empty" | "player1" | "player2" }>`
   border: 1px solid black;
   background-color: ${p => getColor(p.state)};
+  ${p => p.state !== "empty" && "cursor: default"}
 `;
 
 const game = new GameVsAi();
@@ -223,6 +226,12 @@ export const App = () => {
                 isSelected={
                   squareIdx === selectedSquare ||
                   squareIdx === localSelectedSquare
+                }
+                isSelectable={
+                  (squareIdx === selectedSquare ||
+                    squareIdx === localSelectedSquare ||
+                    selectedSquare === null) &&
+                  currentPlayer === WinStatus.PLAYER_X
                 }
                 onClick={() => handleSquareClick(squareIdx)}
               >
