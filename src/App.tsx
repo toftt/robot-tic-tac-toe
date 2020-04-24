@@ -10,15 +10,26 @@ const FullScreenContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 
 const BoardWrapper = styled.div`
   width: 60vmin;
   height: 60vmin;
+
+  @media (max-width: 768px) {
+    width: 80vmin;
+    height: 80vmin;
+  }
+
+  @media (max-width: 480px) {
+    width: 95vmin;
+    height: 95vmin;
+  }
 `;
 
 const TicTacContainer = styled.div<{
-  gap?: string;
+  gap?: boolean;
   isSelected?: boolean;
   isWon?: WinStatus | false;
 }>`
@@ -28,7 +39,20 @@ const TicTacContainer = styled.div<{
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
 
-  grid-gap: ${p => (p.gap ? p.gap : "0")};
+  ${p =>
+    p.gap &&
+    `
+  grid-gap: 64px;
+
+  @media (max-width: 768px) {
+    grid-gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    grid-gap: 8px
+  }
+
+          `};
   ${p => p.isWon === WinStatus.PLAYER_X && "border: 3px solid blue"}
   ${p => p.isWon === WinStatus.PLAYER_O && "border: 3px solid green"}
   ${p => p.isSelected && "border: 3px solid yellow"}
@@ -64,16 +88,19 @@ const getColor = (state: "empty" | "player1" | "player2") => {
 };
 
 const getStateFromWinStatus = (status: WinStatus) => {
+  let s = "";
   switch (status) {
     case WinStatus.PLAYER_O:
-      return "Robot wins! Better luck next time.";
+      s = "Robot wins! Better luck next time.";
+      break;
     case WinStatus.PLAYER_X:
-      return "You win! Congratulations!";
+      s = "You win! Congratulations!";
+      break;
     case WinStatus.DRAW:
-      return "It's a draw!";
-    default:
-      return "";
+      s = "It's a draw!";
+      break;
   }
+  return `${s} To start a new game, refresh the page.`;
 };
 
 const Square = styled.div<{ state: "empty" | "player1" | "player2" }>`
@@ -152,16 +179,19 @@ export const App = () => {
       ) : (
         <BoardWrapper>
           {winStatus !== WinStatus.IN_PROGRESS && (
-            <p>{getStateFromWinStatus(winStatus)}</p>
+            <>
+              <p>{getStateFromWinStatus(winStatus)}</p>
+              <button onClick={() => window.location.reload()}>Refresh</button>
+            </>
           )}
           {winStatus === WinStatus.IN_PROGRESS ? (
             currentPlayer === WinStatus.PLAYER_X ? (
               <p>It is your turn to move</p>
             ) : (
-              <p>Computer is thinking...</p>
+              <p>Robot is thinking...</p>
             )
           ) : null}
-          <TicTacContainer gap="64px">
+          <TicTacContainer gap={true}>
             {grid.map((square, squareIdx) => (
               <TicTacContainer
                 key={squareIdx}
