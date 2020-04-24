@@ -36,8 +36,12 @@ const TicTacContainer = styled.div<{
   width: 100%;
   height: 100%;
   display: grid;
+  position: relative;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+
+  ${p => p.isWon === WinStatus.PLAYER_X && "border: 3px solid blue"}
+  ${p => p.isWon === WinStatus.PLAYER_O && "border: 3px solid green"}
 
   ${p =>
     p.gap &&
@@ -51,10 +55,26 @@ const TicTacContainer = styled.div<{
   @media (max-width: 480px) {
     grid-gap: 8px
   }
+`};
 
-          `};
-  ${p => p.isWon === WinStatus.PLAYER_X && "border: 3px solid blue"}
-  ${p => p.isWon === WinStatus.PLAYER_O && "border: 3px solid green"}
+  &:after {
+    ${p =>
+      p.isWon &&
+      `
+
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: ${
+              p.isWon === WinStatus.PLAYER_X ? "blue" : "green"
+            };
+            opacity: 0.3;
+              `}
+  }
+
   ${p => p.isSelected && "border: 3px solid yellow"}
 `;
 
@@ -87,14 +107,14 @@ const getColor = (state: "empty" | "player1" | "player2") => {
   }
 };
 
-const getStateFromWinStatus = (status: WinStatus) => {
+const getStateFromWinStatus = (status: WinStatus, difficulty: string) => {
   let s = "";
   switch (status) {
     case WinStatus.PLAYER_O:
       s = "Robot wins! Better luck next time.";
       break;
     case WinStatus.PLAYER_X:
-      s = "You win! Congratulations!";
+      s = `You win! Congratulations on beating the ${difficulty} difficulty!`;
       break;
     case WinStatus.DRAW:
       s = "It's a draw!";
@@ -180,7 +200,7 @@ export const App = () => {
         <BoardWrapper>
           {winStatus !== WinStatus.IN_PROGRESS && (
             <>
-              <p>{getStateFromWinStatus(winStatus)}</p>
+              <p>{getStateFromWinStatus(winStatus, difficulty)}</p>
               <button onClick={() => window.location.reload()}>Refresh</button>
             </>
           )}
