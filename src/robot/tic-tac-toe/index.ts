@@ -14,11 +14,12 @@ export class MonteCarloTreeSearch {
 
     rootNode.state.board = board.clone();
 
-    const end = new Date().valueOf() + 20000;
+    const end = new Date().valueOf() + 1000;
+    let x = 0;
     while (new Date().valueOf() < end) {
+      x++;
       // selection
       const promisingNode = this.selectPromisingNode(rootNode);
-
       // expansion
       if (promisingNode.state.board.checkStatus() === WinStatus.IN_PROGRESS) {
         this.expandNode(promisingNode);
@@ -34,8 +35,10 @@ export class MonteCarloTreeSearch {
 
       // update
       this.backPropogation(nodeToExplore, playoutResult);
+      //await new Promise((res) => setTimeout(res, 0));
     }
 
+    console.log(`ran ${x} iterations`);
     const winnerNode = rootNode.getChildWithMaxScore();
     tree.root = winnerNode;
     return winnerNode.state.board;

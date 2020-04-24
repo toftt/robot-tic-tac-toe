@@ -12,13 +12,20 @@ const winningBoards: Array<number> = [
   0b001010100
 ];
 
+interface ExportedBoard {
+  color: number;
+  presence: number;
+  currentBoard: number | null;
+  boards: Array<{ presence: number; color: number }>;
+  playerOneToMove: boolean;
+}
 export class FullBoard implements Board {
   printEachMove: boolean = false;
   currentBoard: number | null = null;
   private presence: number = 0;
   private color: number = 0;
   private playerOneToMove: boolean = true;
-  private boards: Array<CustomTicTacToeBoard> = [];
+  boards: Array<CustomTicTacToeBoard> = [];
 
   constructor() {
     for (let i = 0; i < 9; i++) {
@@ -34,6 +41,28 @@ export class FullBoard implements Board {
     copy.playerOneToMove = this.playerOneToMove;
     copy.boards = this.boards.map(board => board.clone());
     return copy;
+  }
+
+  static importBoard(exportedBoard: ExportedBoard) {
+    const newBoard = new FullBoard();
+    newBoard.color = exportedBoard.color;
+    newBoard.presence = exportedBoard.presence;
+    newBoard.currentBoard = exportedBoard.currentBoard;
+    newBoard.boards = exportedBoard.boards.map(board =>
+      CustomTicTacToeBoard.importBoard(board)
+    );
+    newBoard.playerOneToMove = exportedBoard.playerOneToMove;
+    return newBoard;
+  }
+
+  exportBoard(): ExportedBoard {
+    return {
+      color: this.color,
+      presence: this.presence,
+      currentBoard: this.currentBoard,
+      boards: this.boards.map(board => board.exportBoard()),
+      playerOneToMove: this.playerOneToMove
+    };
   }
 
   private getAvailableMovesForOuterGrid() {
@@ -90,6 +119,7 @@ export class FullBoard implements Board {
     const outerMove = move < 9 ? this.currentBoard : Math.floor(move / 10) - 1;
     const innerMove = move < 9 ? move : move % 10;
 
+    // @ts-ignore
     this.boards[outerMove].performMove(innerMove, this.playerOneToMove);
 
     const statusOfNextBoard = this.boards[innerMove].checkStatus();
@@ -100,6 +130,7 @@ export class FullBoard implements Board {
       this.currentBoard = null;
     }
 
+    // @ts-ignore
     this.updatePresenceAndColor(outerMove);
 
     this.playerOneToMove = !this.playerOneToMove;
@@ -126,7 +157,21 @@ export class FullBoard implements Board {
     )
       return WinStatus.PLAYER_O;
 
-    if (this.getAvailableMoves().length === 0) return WinStatus.DRAW;
+    if (this.getAvailableMoves().length === 0) {
+      const winners = this.boards.reduce(
+        (acc, board) => {
+          if (board.checkStatus() === WinStatus.PLAYER_O)
+            return { ...acc, playerO: acc.playerO + 1 };
+          if (board.checkStatus() === WinStatus.PLAYER_X)
+            return { ...acc, playerX: acc.playerX + 1 };
+          return acc;
+        },
+        { playerO: 0, playerX: 0 }
+      );
+      if (winners.playerO > winners.playerX) return WinStatus.PLAYER_O;
+      if (winners.playerX > winners.playerO) return WinStatus.PLAYER_X;
+      return WinStatus.DRAW;
+    }
     return WinStatus.IN_PROGRESS;
   }
 

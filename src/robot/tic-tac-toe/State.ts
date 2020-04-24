@@ -1,6 +1,7 @@
 import { Board } from "./Board";
 
 export class State {
+    // @ts-ignore
   board: Board;
   visitCount: number = 0;
   winScore: number = 0;

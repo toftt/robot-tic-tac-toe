@@ -11,6 +11,10 @@ const winningBoards: Array<number> = [
   0b001010100
 ];
 
+interface ExportedBoard {
+  presence: number;
+  color: number;
+}
 export class CustomTicTacToeBoard {
   presence: number = 0;
   color: number = 0;
@@ -23,6 +27,20 @@ export class CustomTicTacToeBoard {
     copy.color = this.color;
     copy.lastPerformedMove = this.lastPerformedMove;
     return copy;
+  }
+
+  static importBoard(board: ExportedBoard) {
+    const newBoard = new CustomTicTacToeBoard();
+    newBoard.presence = board.presence;
+    newBoard.color = board.color;
+    return newBoard;
+  }
+
+  exportBoard(): ExportedBoard {
+    return {
+      presence: this.presence,
+      color: this.color
+    };
   }
 
   getAvailableMoves(): Array<number> {
