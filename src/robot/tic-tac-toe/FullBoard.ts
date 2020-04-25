@@ -9,7 +9,7 @@ const winningBoards: Array<number> = [
   0b010010010,
   0b001001001,
   0b100010001,
-  0b001010100
+  0b001010100,
 ];
 
 interface ExportedBoard {
@@ -22,9 +22,9 @@ interface ExportedBoard {
 export class FullBoard implements Board {
   printEachMove: boolean = false;
   currentBoard: number | null = null;
-  private presence: number = 0;
-  private color: number = 0;
-  private playerOneToMove: boolean = true;
+  presence: number = 0;
+  color: number = 0;
+  playerOneToMove: boolean = true;
   boards: Array<CustomTicTacToeBoard> = [];
 
   constructor() {
@@ -39,8 +39,20 @@ export class FullBoard implements Board {
     copy.presence = this.presence;
     copy.color = this.color;
     copy.playerOneToMove = this.playerOneToMove;
-    copy.boards = this.boards.map(board => board.clone());
+    copy.boards = this.boards.map((board) => board.clone());
     return copy;
+  }
+
+  isEqual(board: FullBoard) {
+    return (
+      this.color === board.color &&
+      this.presence === board.presence &&
+      this.currentBoard === board.currentBoard &&
+      this.playerOneToMove === board.playerOneToMove &&
+      this.boards.every((innerBoard, idx) =>
+        innerBoard.isEqual(board.boards[idx])
+      )
+    );
   }
 
   static importBoard(exportedBoard: ExportedBoard) {
@@ -48,7 +60,7 @@ export class FullBoard implements Board {
     newBoard.color = exportedBoard.color;
     newBoard.presence = exportedBoard.presence;
     newBoard.currentBoard = exportedBoard.currentBoard;
-    newBoard.boards = exportedBoard.boards.map(board =>
+    newBoard.boards = exportedBoard.boards.map((board) =>
       CustomTicTacToeBoard.importBoard(board)
     );
     newBoard.playerOneToMove = exportedBoard.playerOneToMove;
@@ -60,8 +72,8 @@ export class FullBoard implements Board {
       color: this.color,
       presence: this.presence,
       currentBoard: this.currentBoard,
-      boards: this.boards.map(board => board.exportBoard()),
-      playerOneToMove: this.playerOneToMove
+      boards: this.boards.map((board) => board.exportBoard()),
+      playerOneToMove: this.playerOneToMove,
     };
   }
 
@@ -69,7 +81,7 @@ export class FullBoard implements Board {
     return new Array(9)
       .fill(undefined)
       .map((_, index) => index)
-      .filter(number => {
+      .filter((number) => {
         const bitMask = 2 ** number;
         return (bitMask & this.presence) === 0;
       });
@@ -81,10 +93,10 @@ export class FullBoard implements Board {
       return this.boards[this.currentBoard].getAvailableMoves();
 
     const availableMoves: Array<number> = [];
-    this.getAvailableMovesForOuterGrid().forEach(move => {
+    this.getAvailableMovesForOuterGrid().forEach((move) => {
       const board = this.boards[move];
       if (board.checkStatus() === WinStatus.IN_PROGRESS) {
-        board.getAvailableMoves().forEach(innerMove => {
+        board.getAvailableMoves().forEach((innerMove) => {
           availableMoves.push(move * 10 + innerMove + 10);
         });
       }
@@ -140,20 +152,20 @@ export class FullBoard implements Board {
   }
 
   getBoards() {
-    return this.boards.map(board => board.getRows());
+    return this.boards.map((board) => board.getRows());
   }
 
   checkStatus() {
     if (
       winningBoards.some(
-        board => (this.presence & board & this.color) === board
+        (board) => (this.presence & board & this.color) === board
       )
     )
       return WinStatus.PLAYER_X;
 
     if (
       winningBoards.some(
-        board => (this.presence & board & ~this.color) === board
+        (board) => (this.presence & board & ~this.color) === board
       )
     )
       return WinStatus.PLAYER_O;
@@ -192,7 +204,7 @@ export class FullBoard implements Board {
         row[1].push(b);
         row[2].push(c);
       }
-      const res = row.map(x => x.join("    ")).join("\n");
+      const res = row.map((x) => x.join("    ")).join("\n");
       board.push(res);
     }
     console.log(

@@ -5,14 +5,33 @@ import { Tree } from "./Tree";
 
 export class MonteCarloTreeSearch {
   static readonly WIN_SCORE: number = 10;
+  private tree: Tree;
+
+  constructor() {
+    this.tree = new Tree();
+  }
+
+  private initialize(board: Board) {
+    this.tree = new Tree();
+    this.tree.root.state.board = board.clone();
+  }
+
+  private assignRootNode(board: Board) {
+    const nodeToStartFrom = this.tree.root.children.find((child) =>
+      child.state?.board.isEqual(board)
+    );
+    console.log("found valid node");
+
+    if (nodeToStartFrom) this.tree.root = nodeToStartFrom;
+    else this.initialize(board);
+  }
 
   findNextMove(board: Board, winStatus: WinStatus, thinkTime: number) {
     const opponent = board.getOpposedStatus(winStatus);
 
-    const tree = new Tree();
-    const rootNode = tree.root;
+    this.assignRootNode(board);
 
-    rootNode.state.board = board.clone();
+    const rootNode = this.tree.root;
 
     const end = new Date().valueOf() + thinkTime;
     let x = 0;
@@ -39,7 +58,7 @@ export class MonteCarloTreeSearch {
 
     console.log(`ran ${x} iterations`);
     const winnerNode = rootNode.getChildWithMaxScore();
-    tree.root = winnerNode;
+    this.tree.root = winnerNode;
     return winnerNode.state.board;
   }
 
@@ -53,7 +72,7 @@ export class MonteCarloTreeSearch {
 
   private expandNode(node: Node): void {
     const possibleStates = node.state.getAllPossibleStates();
-    possibleStates.forEach(state => {
+    possibleStates.forEach((state) => {
       const newNode = new Node({ type: "state", state });
       newNode.parent = node;
       node.children.push(newNode);

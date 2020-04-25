@@ -8,7 +8,7 @@ const winningBoards: Array<number> = [
   0b010010010,
   0b001001001,
   0b100010001,
-  0b001010100
+  0b001010100,
 ];
 
 interface ExportedBoard {
@@ -29,6 +29,10 @@ export class CustomTicTacToeBoard {
     return copy;
   }
 
+  isEqual(board: CustomTicTacToeBoard) {
+    return board.presence === this.presence && board.color === this.color;
+  }
+
   static importBoard(board: ExportedBoard) {
     const newBoard = new CustomTicTacToeBoard();
     newBoard.presence = board.presence;
@@ -39,7 +43,7 @@ export class CustomTicTacToeBoard {
   exportBoard(): ExportedBoard {
     return {
       presence: this.presence,
-      color: this.color
+      color: this.color,
     };
   }
 
@@ -49,7 +53,7 @@ export class CustomTicTacToeBoard {
     return new Array(9)
       .fill(undefined)
       .map((_, index) => index)
-      .filter(number => {
+      .filter((number) => {
         const bitMask = 2 ** number;
         return (bitMask & this.presence) === 0;
       });
@@ -67,14 +71,14 @@ export class CustomTicTacToeBoard {
   checkStatus() {
     if (
       winningBoards.some(
-        board => (this.presence & board & this.color) === board
+        (board) => (this.presence & board & this.color) === board
       )
     )
       return WinStatus.PLAYER_X;
 
     if (
       winningBoards.some(
-        board => (this.presence & board & ~this.color) === board
+        (board) => (this.presence & board & ~this.color) === board
       )
     )
       return WinStatus.PLAYER_O;
@@ -92,7 +96,7 @@ export class CustomTicTacToeBoard {
     return new Array(9)
       .fill(undefined)
       .map((_, index) => index)
-      .map(number => {
+      .map((number) => {
         const bitMask = 2 ** number;
         if ((bitMask & this.presence) === 0) return "empty";
         else if ((bitMask & this.presence & this.color) === 0) return "player2";
