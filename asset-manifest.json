@@ -1,24 +1,24 @@
 {
   "files": {
     "main.css": "/robot-tic-tac-toe/static/css/main.d19b82a0.chunk.css",
-    "main.js": "/robot-tic-tac-toe/static/js/main.add836fd.chunk.js",
-    "main.js.map": "/robot-tic-tac-toe/static/js/main.add836fd.chunk.js.map",
-    "runtime-main.js": "/robot-tic-tac-toe/static/js/runtime-main.22a57cb7.js",
-    "runtime-main.js.map": "/robot-tic-tac-toe/static/js/runtime-main.22a57cb7.js.map",
-    "static/js/2.2744774e.chunk.js": "/robot-tic-tac-toe/static/js/2.2744774e.chunk.js",
-    "static/js/2.2744774e.chunk.js.map": "/robot-tic-tac-toe/static/js/2.2744774e.chunk.js.map",
-    "22606a39f9aab4dcee65.worker.js": "/robot-tic-tac-toe/22606a39f9aab4dcee65.worker.js",
-    "22606a39f9aab4dcee65.worker.js.map": "/robot-tic-tac-toe/22606a39f9aab4dcee65.worker.js.map",
+    "main.js": "/robot-tic-tac-toe/static/js/main.fe60bcd6.chunk.js",
+    "main.js.map": "/robot-tic-tac-toe/static/js/main.fe60bcd6.chunk.js.map",
+    "runtime-main.js": "/robot-tic-tac-toe/static/js/runtime-main.fec52621.js",
+    "runtime-main.js.map": "/robot-tic-tac-toe/static/js/runtime-main.fec52621.js.map",
+    "static/js/2.e096189b.chunk.js": "/robot-tic-tac-toe/static/js/2.e096189b.chunk.js",
+    "static/js/2.e096189b.chunk.js.map": "/robot-tic-tac-toe/static/js/2.e096189b.chunk.js.map",
+    "3ecc296ddfb6d075c181.worker.js": "/robot-tic-tac-toe/3ecc296ddfb6d075c181.worker.js",
+    "3ecc296ddfb6d075c181.worker.js.map": "/robot-tic-tac-toe/3ecc296ddfb6d075c181.worker.js.map",
     "index.html": "/robot-tic-tac-toe/index.html",
-    "precache-manifest.d3656c644e9b8b5c3bd49e36514a40f9.js": "/robot-tic-tac-toe/precache-manifest.d3656c644e9b8b5c3bd49e36514a40f9.js",
+    "precache-manifest.eaeb07110d42d2d9dd809f4738310b34.js": "/robot-tic-tac-toe/precache-manifest.eaeb07110d42d2d9dd809f4738310b34.js",
     "service-worker.js": "/robot-tic-tac-toe/service-worker.js",
     "static/css/main.d19b82a0.chunk.css.map": "/robot-tic-tac-toe/static/css/main.d19b82a0.chunk.css.map",
-    "static/js/2.2744774e.chunk.js.LICENSE.txt": "/robot-tic-tac-toe/static/js/2.2744774e.chunk.js.LICENSE.txt"
+    "static/js/2.e096189b.chunk.js.LICENSE.txt": "/robot-tic-tac-toe/static/js/2.e096189b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.22a57cb7.js",
-    "static/js/2.2744774e.chunk.js",
+    "static/js/runtime-main.fec52621.js",
+    "static/js/2.e096189b.chunk.js",
     "static/css/main.d19b82a0.chunk.css",
-    "static/js/main.add836fd.chunk.js"
+    "static/js/main.fe60bcd6.chunk.js"
   ]
 }
