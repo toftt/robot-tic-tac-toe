@@ -17,13 +17,16 @@ export class MonteCarloTreeSearch {
   }
 
   private assignRootNode(board: Board) {
-    const nodeToStartFrom = this.tree.root.children.find((child) =>
+    const nodeToStartFrom = this.tree.root.children.find(child =>
       child.state?.board.isEqual(board)
     );
     console.log("found valid node");
 
-    if (nodeToStartFrom) this.tree.root = nodeToStartFrom;
-    else this.initialize(board);
+    if (nodeToStartFrom) {
+      this.tree.root = nodeToStartFrom;
+      // @ts-ignore
+      this.tree.root.parent = undefined;
+    } else this.initialize(board);
   }
 
   findNextMove(board: Board, winStatus: WinStatus, thinkTime: number) {
@@ -72,7 +75,7 @@ export class MonteCarloTreeSearch {
 
   private expandNode(node: Node): void {
     const possibleStates = node.state.getAllPossibleStates();
-    possibleStates.forEach((state) => {
+    possibleStates.forEach(state => {
       const newNode = new Node({ type: "state", state });
       newNode.parent = node;
       node.children.push(newNode);

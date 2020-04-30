@@ -8,11 +8,11 @@ const getThinkingTimeForDifficulty = (
 ) => {
   switch (difficulty) {
     case "easy":
-      return 500;
-    case "intermediate":
       return 1000;
+    case "intermediate":
+      return 3000;
     case "hard":
-      return 1500;
+      return 6000;
   }
 };
 
@@ -41,7 +41,7 @@ export class GameVsAi {
       grid: this.board.getBoards(),
       selectedSquare: this.board.currentBoard,
       currentPlayer: this.board.getPlayerToMove(),
-      winStatus: this.board.checkStatus(),
+      winStatus: this.board.checkStatus()
     };
   }
 
@@ -61,7 +61,7 @@ export class GameVsAi {
   }
 
   async getNextAiMove(difficulty: "easy" | "intermediate" | "hard") {
-    const promise = new Promise<any>((resolve) => {
+    const promise = new Promise<any>(resolve => {
       this.resolvePromise = resolve;
     });
 
@@ -69,7 +69,7 @@ export class GameVsAi {
     this.worker.postMessage([
       this.board.exportBoard(),
       WinStatus.PLAYER_O,
-      timeToThink,
+      timeToThink
     ]);
     const exportedBoard = await promise;
     this.board = FullBoard.importBoard(exportedBoard);

@@ -22,7 +22,7 @@ type Arguments =
 export class Node {
   state: State;
   children: Array<Node>;
-    // @ts-ignore
+  // @ts-ignore
   parent: Node;
 
   constructor(args: Arguments) {
